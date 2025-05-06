@@ -5,11 +5,19 @@
 #include "xplanefmsformat.h"
 
 #include "flightplan.h"
+#include "utils.h"
 
 using namespace std;
 using namespace UFC;
 
-void XPlaneFormat::save(shared_ptr<FlightConverter> flightConverter, shared_ptr<FlightPlan> flightPlan, string filename)
+std::shared_ptr<FlightPlan> XPlaneFormat::load(std::string filename)
+{
+    auto text = readTextFile(filename, true);
+
+    return nullptr;
+}
+
+void XPlaneFormat::save(shared_ptr<FlightPlan> flightPlan, string filename)
 {
     FILE* fd = fopen(filename.c_str(), "w");
     if (fd == nullptr)
@@ -20,7 +28,7 @@ void XPlaneFormat::save(shared_ptr<FlightConverter> flightConverter, shared_ptr<
 
     fprintf(fd, "I\n");
     fprintf(fd, "1100 Version\n");
-    fprintf(fd, "CYCLE %s\n", flightPlan->m_cycle.c_str());
+    fprintf(fd, "CYCLE %d\n", flightPlan->m_cycle);
 
     auto waypointCount = flightPlan->m_waypoints.size();
     if (!flightPlan->m_departureAirport.empty())
@@ -38,7 +46,7 @@ void XPlaneFormat::save(shared_ptr<FlightConverter> flightConverter, shared_ptr<
 
     if (!flightPlan->m_departureAirport.empty())
     {
-        auto airport = flightConverter->getAirports()->findByCode(flightPlan->m_departureAirport);
+        auto airport = m_flightConverter->getAirports()->findByCode(flightPlan->m_departureAirport);
         printf("Airport: %s -> %ls\n", flightPlan->m_departureAirport.c_str(), airport->getName().c_str());
         fprintf(fd, "1 %s ADEP %0.6f %0.6f %0.6f\n", flightPlan->m_departureAirport.c_str(),
             airport->getElevation(),
@@ -51,6 +59,7 @@ void XPlaneFormat::save(shared_ptr<FlightConverter> flightConverter, shared_ptr<
         switch (waypoint.type)
         {
             using enum NavAidType;
+            case DME:
             case VOR: type = 3; break;
             case FIX: type = 11; break;
             case WAY_POINT: type = 28; break;
@@ -77,7 +86,7 @@ void XPlaneFormat::save(shared_ptr<FlightConverter> flightConverter, shared_ptr<
     }
     if (!flightPlan->m_destinationAirport.empty())
     {
-        auto airport = flightConverter->getAirports()->findByCode(flightPlan->m_destinationAirport);
+        auto airport = m_flightConverter->getAirports()->findByCode(flightPlan->m_destinationAirport);
         printf("Airport: %s -> %ls\n", flightPlan->m_destinationAirport.c_str(), airport->getName().c_str());
         fprintf(fd, "1 %s ADES %0.6f %0.6f %0.6f\n", flightPlan->m_destinationAirport.c_str(),
             airport->getElevation(),

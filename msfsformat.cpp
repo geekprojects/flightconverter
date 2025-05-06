@@ -29,7 +29,7 @@ float dmmToDegrees(string dmm)
     return degrees;
 }
 
-std::shared_ptr<FlightPlan> MSFSFormat::load(std::shared_ptr<FlightConverter> flightConverter, std::string filename)
+std::shared_ptr<FlightPlan> MSFSFormat::load(std::string filename)
 {
     auto text = readTextFile(filename, false);
 

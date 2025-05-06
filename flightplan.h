@@ -30,7 +30,7 @@ struct WayPoint
 struct FlightPlan
 {
     FlightPlanType m_type = FlightPlanType::VFR;
-    std::string m_cycle = "2410";
+    int m_cycle = 2501;
     int m_cruisingAltitude = 0;
     std::string m_aircraftType;
 

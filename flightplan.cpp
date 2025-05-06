@@ -90,4 +90,7 @@ void FlightPlan::updateWaypoints(std::shared_ptr<FlightConverter> flightConnecto
     }
 
     removeDuplicates();
+
+    // We've updated the cycle
+    m_cycle = navData->getCycle();
 }

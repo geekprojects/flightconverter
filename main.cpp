@@ -10,7 +10,7 @@ using namespace std;
 using namespace UFC;
 
 // The CIVA can only handle 9 way points, so split the flight plan into multiple files
-void splitCIVA(shared_ptr<FlightConverter> converter, shared_ptr<FlightPlan> plan, FileFormat* format, string name)
+void splitCIVA(shared_ptr<FlightConverter> converter, shared_ptr<FlightPlan> plan, FormatType format, string name)
 {
     printf("Size=%lu\n", plan->m_waypoints.size());
     for (int i = 0, part = 1; i < plan->m_waypoints.size(); i += 8, part++)
@@ -36,7 +36,7 @@ void splitCIVA(shared_ptr<FlightConverter> converter, shared_ptr<FlightPlan> pla
 
         segment->m_waypoints = vector(plan->m_waypoints.begin() + i, plan->m_waypoints.begin() + end);
 
-        format->save(converter, segment, name + "-part" + to_string(part) + ".fms");
+        converter->save(format, segment, name + "-part" + to_string(part) + ".fms");
     }
 }
 
@@ -52,19 +52,16 @@ int main(int argc, char** argv)
     //auto idx = plnFile.find_last_of('.');
     //auto fmsFile = plnFile.substr(0, idx) + ".fms";
 
-    MSFSFormat msfsFormat;
-    XPlaneFormat xPlaneFormat;
-
     auto flightConverter = make_shared<FlightConverter>();
     flightConverter->init();
 
-    auto fp = msfsFormat.load(flightConverter, plnFile);
+    auto fp = flightConverter->load(plnFile);
 
     fp->updateWaypoints(flightConverter);
 
     string name = fp->m_departureAirport + fp->m_destinationAirport;
-    xPlaneFormat.save(flightConverter, fp, name + ".fms");
-    splitCIVA(flightConverter, fp, &xPlaneFormat, name);
+    flightConverter->save(FormatType::XPLANE, fp, name + ".fms");
+    splitCIVA(flightConverter, fp, FormatType::XPLANE, name);
 
     return 0;
 }
