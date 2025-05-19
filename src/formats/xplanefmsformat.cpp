@@ -2,28 +2,47 @@
 // Created by Ian Parker on 23/10/2024.
 //
 
-#include "xplanefmsformat.h"
+#include "formats/xplanefmsformat.h"
 
+#include "flightconverter.h"
 #include "flightplan.h"
 #include "utils.h"
 
 using namespace std;
 using namespace UFC;
 
-std::shared_ptr<FlightPlan> XPlaneFormat::load(std::string filename)
+bool XPlaneFormat::check(std::string filename)
+{
+    auto text = readTextFile(filename, true);
+    if (text.size() < 4)
+    {
+        return false;
+    }
+    if (text.at(0).at(0) != "I")
+    {
+        return false;
+    }
+    if (text.at(1).at(1) != "Version")
+    {
+        return false;
+    }
+    return true;
+}
+
+shared_ptr<FlightPlan> XPlaneFormat::load(string filename)
 {
     auto text = readTextFile(filename, true);
 
     return nullptr;
 }
 
-void XPlaneFormat::save(shared_ptr<FlightPlan> flightPlan, string filename)
+bool XPlaneFormat::save(shared_ptr<FlightPlan> flightPlan, string filename)
 {
     FILE* fd = fopen(filename.c_str(), "w");
     if (fd == nullptr)
     {
         printf("XPlaneFormat::save() could not open file %s\n", filename.c_str());
-        return;
+        return false;
     }
 
     fprintf(fd, "I\n");
@@ -36,11 +55,24 @@ void XPlaneFormat::save(shared_ptr<FlightPlan> flightPlan, string filename)
         fprintf(fd, "ADEP %s\n", flightPlan->m_departureAirport.c_str());
         waypointCount++;
     }
+    /*
+    if (!flightPlan->m_departureRunway.empty())
+    {
+        fprintf(fd, "DEPRWY %s\n", flightPlan->m_departureRunway.c_str());
+    }
+    */
     if (!flightPlan->m_destinationAirport.empty())
     {
         fprintf(fd, "ADES %s\n", flightPlan->m_destinationAirport.c_str());
         waypointCount++;
     }
+
+    /*
+    if (!flightPlan->m_destinationRunway.empty())
+    {
+        fprintf(fd, "DESRWY %s\n", flightPlan->m_destinationRunway.c_str());
+    }
+    */
 
     fprintf(fd, "NUMENR %lu\n", waypointCount);
 
@@ -94,4 +126,6 @@ void XPlaneFormat::save(shared_ptr<FlightPlan> flightPlan, string filename)
     }
 
     fclose(fd);
+
+    return true;
 }

@@ -25,6 +25,17 @@ struct WayPoint
     UFC::Coordinate coordinate;
     std::string id;
     std::string via;
+
+    std::shared_ptr<UFC::NavAid> navAid;
+
+    WayPoint() = default;
+
+    explicit WayPoint(const std::shared_ptr<UFC::NavAid> &navAid) :
+        type(navAid->getType()),
+        coordinate(navAid->getLocation()),
+        id(navAid->getId()),
+        navAid(navAid)
+    { }
 };
 
 struct FlightPlan
@@ -46,9 +57,11 @@ struct FlightPlan
     std::string m_destinationApproach;
 
     std::vector<WayPoint> m_waypoints;
+};
 
-    void removeDuplicates();
-    void updateWaypoints(std::shared_ptr<FlightConverter> flightConverter);
+struct FlightPlanContainer
+{
+    std::vector<std::shared_ptr<FlightPlan>> m_flightPlans;
 };
 
 #endif //FLIGHTPLAN_H

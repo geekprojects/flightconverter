@@ -2,10 +2,10 @@
 // Created by Ian Parker on 23/10/2024.
 //
 
-#include "msfsformat.h"
+#include "msfsiniformat.h"
 
-#include "flightplan.h"
-#include "utils.h"
+#include "../flightplan.h"
+#include "../utils.h"
 
 using namespace std;
 using namespace UFC;
@@ -29,7 +29,14 @@ float dmmToDegrees(string dmm)
     return degrees;
 }
 
-std::shared_ptr<FlightPlan> MSFSFormat::load(std::string filename)
+bool MSFSIniFormat::check(std::string fileName)
+{
+    auto text = readTextFile(fileName, false);
+    printf("MSFSFormat::check: %s\n", text.at(0).at(0).c_str());
+    return text.size() > 0 && text.at(0).at(0) == "[flightplan]";
+}
+
+shared_ptr<FlightPlan> MSFSIniFormat::load(string filename)
 {
     auto text = readTextFile(filename, false);
 
@@ -154,7 +161,7 @@ std::shared_ptr<FlightPlan> MSFSFormat::load(std::string filename)
             printf("MSFSFormat::load: Waypoint: -> %0.5f, %0.5f\n", lat, lon);
             wayPoint.id = name;
             wayPoint.coordinate = Coordinate(lat, lon);
-            flightPlan->m_waypoints.push_back(wayPoint);
+            addWayPoint(flightPlan, wayPoint);
         }
         else
         {
