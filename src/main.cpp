@@ -8,6 +8,7 @@
 #include "commands/split.h"
 #include "commands/update.h"
 #include "commands/write.h"
+#include "commands/simbrief.h"
 
 using namespace std;
 using namespace UFC;
@@ -41,6 +42,10 @@ unique_ptr<Command> getCommand(FlightConverter* flightConverter, const string& c
     if (commandStr == "circuit")
     {
         return make_unique<CircuitCommand>(flightConverter);
+    }
+    if (commandStr == "simbrief")
+    {
+        return make_unique<SimbriefCommand>(flightConverter);
     }
     printf("Unknown command: %s\n", commandStr.c_str());
     exit(1);

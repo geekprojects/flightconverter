@@ -8,8 +8,10 @@
 #include <string>
 #include <memory>
 
+#include "utils.h"
 #include "formats/msfsiniformat.h"
 #include "formats/xplanefmsformat.h"
+#include "formats/simbriefjson.h"
 
 using namespace std;
 using namespace UFC;
@@ -36,6 +38,7 @@ bool FlightConverter::init()
 
     m_formats.push_back(new XPlaneFormat(this));
     m_formats.push_back(new MSFSIniFormat(this));
+    m_formats.push_back(new SimbriefJson(this));
 
     m_initialised = true;
 
@@ -62,11 +65,12 @@ std::shared_ptr<UFC::NavAids> FlightConverter::getNavData()
 
 std::shared_ptr<FlightPlan> FlightConverter::load(const std::string &fileName)
 {
+    vector<vector<string>> file = readTextFile(fileName, true);
 
     for (auto format : m_formats)
     {
         log(DEBUG, "Checking file format: %s", format->getName().c_str());
-        if (format->check(fileName))
+        if (format->check(fileName, file))
         {
             return format->load(fileName);
         }
@@ -100,7 +104,9 @@ std::shared_ptr<UFC::NavAid> FlightConverter::findNavAid(const std::string &id, 
 
         for (const auto& navaid : navaids)
         {
+#if 0
             log(DEBUG, "findNavAid:  -> Found navaid: %s (%ls)", navaid->getId().c_str(), navaid->getLocation().toString().c_str());
+#endif
             double d = GeoUtils::distance(navaid->getLocation(), coordinate);
             if (d < distance)
             {

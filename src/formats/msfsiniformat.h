@@ -18,7 +18,7 @@ class MSFSIniFormat : public FileFormat
     FormatType getType() override { return FormatType::MSFS_INI; }
     std::string getName() override { return "msfs-ini"; }
     std::string getDescription() override { return "MSFS INI"; }
-    bool check(std::string filename) override;
+    bool check(std::string filename, std::vector<std::vector<std::string>> file) override;
     std::shared_ptr<FlightPlan> load(std::string filename) override;
     bool save(std::shared_ptr<FlightPlan> flightPlan, std::string filename) override {return false; };
 };

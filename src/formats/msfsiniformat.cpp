@@ -29,10 +29,8 @@ float dmmToDegrees(string dmm)
     return degrees;
 }
 
-bool MSFSIniFormat::check(std::string fileName)
+bool MSFSIniFormat::check(std::string fileName, std::vector<std::vector<std::string>> text)
 {
-    auto text = readTextFile(fileName, false);
-    printf("MSFSFormat::check: %s\n", text.at(0).at(0).c_str());
     return text.size() > 0 && text.at(0).at(0) == "[flightplan]";
 }
 

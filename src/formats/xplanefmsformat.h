@@ -19,7 +19,7 @@ class XPlaneFormat : public FileFormat
     std::string getName() override { return "xplane-fms"; }
     std::string getDescription() override { return "X-Plane FMS"; }
 
-    bool check(std::string filename) override;
+    bool check(std::string filename, std::vector<std::vector<std::string>> file) override;
     std::shared_ptr<FlightPlan> load(std::string filename) override;
     bool save(std::shared_ptr<FlightPlan> flightPlan, std::string filename) override;
 };

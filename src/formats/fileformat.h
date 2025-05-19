@@ -17,7 +17,8 @@ enum class FormatType
 {
     XPLANE,
     MSFS_INI,
-    MSFS_XML
+    MSFS_XML,
+    SIMBRIEF_JSON,
  };
 
 class FileFormat
@@ -32,7 +33,7 @@ public:
     virtual FormatType getType() = 0;
     virtual std::string getName() = 0;
     virtual std::string getDescription() = 0;
-    virtual bool check(std::string filename) = 0;
+    virtual bool check(std::string filename, std::vector<std::vector<std::string>> file) = 0;
     virtual std::shared_ptr<FlightPlan> load(std::string filename) = 0;
     virtual bool save(std::shared_ptr<FlightPlan> flightPlan, std::string filename) = 0;
 

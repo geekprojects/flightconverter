@@ -56,7 +56,6 @@ vector<vector<string>> readTextFile(string filename, bool split)
             lineBuffer[len - 1] = 0;
             len--;
         }
-        printf("Line: %s\n", lineBuffer);
         if (split)
         {
             result.push_back(splitString(lineBuffer, ' '));

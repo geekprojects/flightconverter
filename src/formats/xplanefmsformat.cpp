@@ -11,9 +11,8 @@
 using namespace std;
 using namespace UFC;
 
-bool XPlaneFormat::check(std::string filename)
+bool XPlaneFormat::check(std::string filename, std::vector<std::vector<std::string>> text)
 {
-    auto text = readTextFile(filename, true);
     if (text.size() < 4)
     {
         return false;
@@ -41,7 +40,7 @@ bool XPlaneFormat::save(shared_ptr<FlightPlan> flightPlan, string filename)
     FILE* fd = fopen(filename.c_str(), "w");
     if (fd == nullptr)
     {
-        printf("XPlaneFormat::save() could not open file %s\n", filename.c_str());
+        printf("XPlaneFormat::save: could not open file %s\n", filename.c_str());
         return false;
     }
 
